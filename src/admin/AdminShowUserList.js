@@ -46,8 +46,8 @@ const AdminShowUserList = () => {
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error: {error}</p>;
 
-    const guests = users.filter(user => user.role === "USER");
-    const sellers = users.filter(user => user.role === "SELLER");
+    const guests = users.filter(user => user.role === "role_customer");
+    const sellers = users.filter(user => user.role === "role_seller");
 
     return (
         <div>

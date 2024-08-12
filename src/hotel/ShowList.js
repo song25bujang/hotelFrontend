@@ -1,49 +1,70 @@
-import {useLocation, useNavigate, useParams} from "react-router-dom";
+import {Link, useLocation, useNavigate, useParams} from "react-router-dom";
 import {Container, Pagination, Table, Button} from "react-bootstrap";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from "axios";
 
 let ShowList = () => {
-    let location = useLocation()
-    let userInfo = location.state.userInfo
-    let params = useParams()
-    let pageNo = params.pageNo
-    let [data, setData] = useState({hotelList: []})
-    let navigate = useNavigate()
+    let location = useLocation();
+    let userInfo = location.state.userInfo;
+    let params = useParams();
+    let pageNo = params.pageNo;
+    let [data, setData] = useState({hotelList: []});
+    let navigate = useNavigate();
 
     let moveToSingle = (id) => {
-        navigate('/hotel/showOne/' + id, {state: {userInfo: userInfo}})
-    }
+        navigate('/hotel/showOne/' + id, {state: {userInfo: userInfo}});
+    };
 
     let moveToPage = (pageNo) => {
-        navigate('/hotel/showList/' + pageNo, {state: {userInfo: userInfo}})
-    }
+        navigate('/hotel/showList/' + pageNo, {state: {userInfo: userInfo}});
+    };
 
     useEffect(() => {
         let selectList = async () => {
             try {
                 let resp = await axios.get("http://localhost:8080/hotel/showList/" + pageNo, {
                     withCredentials: true
-                })
+                });
                 if (resp.status === 200) {
-                    setData(resp.data)
+                    setData(resp.data);
                 }
             } catch (e) {
-                console.error(e)
+                console.error(e);
             }
-        }
-        selectList()
-    }, [pageNo])
+        };
+        selectList();
+    }, [pageNo]);
 
-    let isSeller = userInfo.role === 'role_seller'
+    let isSeller = userInfo.role === 'role_seller';
 
     let moveToWrite = () => {
-        navigate('/hotel/write', {state: {userInfo: userInfo}})
-    }
+        navigate('/hotel/write', {state: {userInfo: userInfo}});
+    };
 
     return (
         <Container className={"mt-3"}>
+            {/* 사용자 정보 표시 */}
+            <div className="mb-3">
+                <h5>User Information</h5>
+                <p>ID: {userInfo.id}</p>
+                <p>Nickname: {userInfo.nickname}</p>
+                <p>Role: {userInfo.role}</p>
+            </div>
+
+            {/* 관리자 페이지 또는 마이페이지 링크를 role에 따라 조건부 렌더링 */}
+            {userInfo.role === 'role_admin' ? (
+                <div className="mb-3">
+                    <Link to={`/admin/users`}>관리자 페이지</Link>
+                </div>
+            ) : (
+                (userInfo.role === 'role_customer' || userInfo.role === 'role_seller') && (
+                    <div className="mb-3">
+                        <Link to={`/user/mypage/${userInfo.id}`}>마이페이지</Link>
+                    </div>
+                )
+            )}
+
             <div className="row mt-3 mb-3">
                 <div className="col-6 offset-3">
                     <form className="d-flex" action="/hotel/showAll/1" method="get">
@@ -91,8 +112,8 @@ let ShowList = () => {
                 </tbody>
             </Table>
         </Container>
-    )
-}
+    );
+};
 
 let TableRow = ({hotel, moveToSingle}) => {
     return (
@@ -102,29 +123,29 @@ let TableRow = ({hotel, moveToSingle}) => {
             <td>{hotel.nickname}</td>
             <td>{hotel.shortContent}</td>
         </tr>
-    )
-}
+    );
+};
 
 let MyPagination = ({startPage, endPage, currentPage, maxPage, moveToPage}) => {
-    let items = []
+    let items = [];
     items.push(
         <Pagination.First onClick={() => moveToPage(1)}/>
-    )
+    );
     for (let i = startPage; i <= endPage; i++) {
         items.push(
             <Pagination.Item key={i} active={i === currentPage} onClick={() => moveToPage(i)}>
                 {i}
             </Pagination.Item>
-        )
+        );
     }
     items.push(
         <Pagination.Last onClick={() => moveToPage(maxPage)}/>
-    )
+    );
     return (
         <Pagination className={"justify-content-center"}>
             {items}
         </Pagination>
-    )
-}
+    );
+};
 
-export default ShowList
+export default ShowList;
