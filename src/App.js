@@ -1,23 +1,27 @@
-import logo from './logo.svg';
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import ShowOne from "./hotel/ShowOne";
-import ShowList from "./hotel/ShowList";
-import Write from "./hotel/Write";
-import Update from "./hotel/Update";
-import Auth from "./user/Auth";
-import './App.css';
-
+import React from 'react';
+import { BrowserRouter as Router, useRoutes } from 'react-router-dom';
+import HomeComponent from './home/HomeComponent'; // UserComponent를 import
+import HotelList from './home/HotelList';
+import HotelShowOne from './home/HotelShowOne';
+import AdminshowUserOne from "./admin/AdminshowUserOne";
+import AdminShowUserList from "./admin/AdminShowUserList";
+import BasketByUser from './basket/BasketByUser';
+function AppRoutes() {
+    const routes = [
+        { path: "/", element: <HomeComponent /> },
+        { path: "/hotelHome", element: <HotelList /> },
+        { path: "/hotelone/:id", element: <HotelShowOne /> },
+        { path: "/admin/users", element: <AdminShowUserList /> },
+        { path: "/admin/user/:id", element: <AdminshowUserOne /> },
+        { path: "/user/basket/:userid", element: <BasketByUser /> }
+    ];
+    return useRoutes(routes);
+}
 function App() {
     return (
         <Router>
-            <div>
-                <Routes>
-                    <Route path="/hotel/showOne/:id" element={<ShowOne />} />
-                    <Route path="/hotel/showList/:pageNo" element={<ShowList />} />
-                    <Route path="/hotel/write" element={<Write />} />
-                    <Route path="/hotel/update/:id" element={<Update />} />
-                    <Route path="/" element={<Auth />} />
-                </Routes>
+            <div className="App">
+                <AppRoutes />
             </div>
         </Router>
     );

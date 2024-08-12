@@ -84,7 +84,7 @@ let ShowList = () => {
                             endPage={data.endPage}
                             currentPage={data.currentPage}
                             maxPage={data.maxPage}
-                            moveToPage={moveToPage}
+                            user={moveToPage}
                         />
                     </td>
                 </tr>
