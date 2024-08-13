@@ -43,6 +43,29 @@ const AdminShowUserList = () => {
         }
     };
 
+    // 사용자 등급 수정 함수
+    // 사용자 등급 수정 함수
+    const handleRoleChange = async (userId, newRole) => {
+        // role 값을 숫자로 변환
+        const roleValue = newRole === "role_seller" ? 2 : 3;
+
+        try {
+            const response = await fetch(`http://localhost:8080/admin/user/${userId}/${roleValue}`, {
+                method: 'PATCH',
+            });
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            // 성공적으로 업데이트되면 사용자의 역할을 업데이트
+            setUsers(users.map(user =>
+                user.id === userId ? { ...user, role: newRole } : user
+            ));
+        } catch (error) {
+            alert("등급 수정 중 오류가 발생했습니다.");
+        }
+    };
+
+
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error: {error}</p>;
 
@@ -56,11 +79,19 @@ const AdminShowUserList = () => {
                 <div>
                     <h2>판매자 관리</h2>
                     <ul>
-                        {sellers.map((user, index) => (
+                        {sellers.map((user) => (
                             <li key={user.id}>
                                 <h3>사용자 : {user.username}</h3>
                                 <p>닉네임 : {user.nickname}</p>
-                                <p>등급 : {user.role}</p>
+                                <p>등급 :
+                                    <select
+                                        value={user.role}
+                                        onChange={(e) => handleRoleChange(user.id, e.target.value)}
+                                    >
+                                        <option value="role_seller">판매자</option>
+                                        <option value="role_customer">일반 사용자</option>
+                                    </select>
+                                </p>
                                 <button onClick={() => handleDelete(user.id)}>삭제</button>
                             </li>
                         ))}
@@ -72,11 +103,19 @@ const AdminShowUserList = () => {
                 <div>
                     <h2>일반 사용자 관리</h2>
                     <ul>
-                        {guests.map((user, index) => (
+                        {guests.map((user) => (
                             <li key={user.id}>
                                 <h3>사용자 : {user.username}</h3>
                                 <p>닉네임 : {user.nickname}</p>
-                                <p>등급 : {user.role}</p>
+                                <p>등급 :
+                                    <select
+                                        value={user.role}
+                                        onChange={(e) => handleRoleChange(user.id, e.target.value)}
+                                    >
+                                        <option value="role_customer">일반 사용자</option>
+                                        <option value="role_seller">판매자</option>
+                                    </select>
+                                </p>
                                 <Link to={`/admin/user/${user.id}`}>상세보기</Link>
                                 <button onClick={() => handleDelete(user.id)}>삭제</button>
                             </li>
